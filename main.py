@@ -23,12 +23,14 @@ async def root():
 async def post_audio(file: UploadFile):
     user_message = transcribe_audio(file)
     chat_response = get_chat_response(user_message)
-    audio_output = text_to_speech(chat_response)
+    print(chat_response)
+    # audio_output = text_to_speech(chat_response)
 
-    def iterfile():
-        yield audio_output
+    # def iterfile():
+    #     yield audio_output
 
-    return StreamingResponse(iterfile(), media_type="application/octet-stream")
+    # return StreamingResponse(iterfile(), media_type="application/octet-stream")
+    return chat_response
 
 @app.get("/clear")
 async def clear_history():
@@ -56,8 +58,8 @@ def get_chat_response(user_message):
         messages=messages
         )
 
-    parsed_gpt_response = gpt_response['choices'][0]['message']['content']
-
+    parsed_gpt_response = gpt_response.choices[0].message.content
+    print(parsed_gpt_response)
     # Save messages
     save_messages(user_message.text, parsed_gpt_response)
 
