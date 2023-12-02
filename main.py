@@ -24,13 +24,12 @@ async def post_audio(file: UploadFile):
     user_message = transcribe_audio(file)
     chat_response = get_chat_response(user_message)
     print(chat_response)
-    # audio_output = text_to_speech(chat_response)
+    audio_output = text_to_speech(chat_response)
 
-    # def iterfile():
-    #     yield audio_output
+    def iterfile():
+        yield audio_output
 
-    # return StreamingResponse(iterfile(), media_type="application/octet-stream")
-    return chat_response
+    return StreamingResponse(iterfile(), media_type="audio/mpeg")
 
 @app.get("/clear")
 async def clear_history():
@@ -91,30 +90,29 @@ def save_messages(user_message, gpt_response):
         json.dump(messages, f)
 
 def text_to_speech(text):
-    voice_id = 'pNInz6obpgDQGcFmaJgB'
+    voice_id = '21m00Tcm4TlvDq8ikWAM'
     
-    body = {
-        "text": text,
-        "model_id": "eleven_monolingual_v1",
-        "voice_settings": {
-            "stability": 0,
-            "similarity_boost": 0,
-            "style": 0.5,
-            "use_speaker_boost": True
-        }
-    }
+    url = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 
     headers = {
+        "Accept": "audio/mpeg",
         "Content-Type": "application/json",
-        "accept": "audio/mpeg",
         "xi-api-key": elevenlabs_key
     }
 
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+    data = {
+        "text": text,
+        "model_id": "eleven_monolingual_v1",
+        "voice_settings": {
+            "stability": 0.5,
+            "similarity_boost": 0.5
+        }
+    }
 
     try:
-        response = requests.post(url, json=body, headers=headers)
+        response = requests.request("POST", url, json=data, headers=headers)
         if response.status_code == 200:
+            print(response.text)
             return response.content
         else:
             print('something went wrong')
