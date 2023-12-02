@@ -3,34 +3,17 @@ from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from dotenv import load_dotenv
-
-import openai
+from openai import OpenAI
 import os
 import json
 import requests
 
 load_dotenv()
 
-openai.api_key = os.getenv("OPEN_AI_KEY")
-openai.organization = os.getenv("OPEN_AI_ORG")
 elevenlabs_key = os.getenv("ELEVENLABS_KEY")
+client = OpenAI(api_key=os.getenv("OPEN_AI_KEY"), organization=os.getenv("OPEN_AI_ORG"))
 
 app = FastAPI()
-
-origins = [
-    "http://localhost:5174",
-    "http://localhost:5173",
-    "http://localhost:8000",
-    "http://localhost:3000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 @app.get("/")
 async def root():
@@ -59,16 +42,16 @@ def transcribe_audio(file):
     with open(file.filename, 'wb') as buffer:
         buffer.write(file.file.read())
     audio_file = open(file.filename, "rb")
-    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    transcript = client.audio.transcriptions.create(model="whisper-1", file=audio_file)
     print(transcript)
     return transcript
 
 def get_chat_response(user_message):
     messages = load_messages()
-    messages.append({"role": "user", "content": user_message['text']})
+    messages.append({"role": "user", "content": user_message.text})
 
     # Send to ChatGpt/OpenAi
-    gpt_response = gpt_response = openai.ChatCompletion.create(
+    gpt_response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=messages
         )
@@ -76,7 +59,7 @@ def get_chat_response(user_message):
     parsed_gpt_response = gpt_response['choices'][0]['message']['content']
 
     # Save messages
-    save_messages(user_message['text'], parsed_gpt_response)
+    save_messages(user_message.text, parsed_gpt_response)
 
     return parsed_gpt_response
 
