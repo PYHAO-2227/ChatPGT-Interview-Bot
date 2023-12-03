@@ -1,5 +1,25 @@
-AI-Interviewer-BACKEND-HCI
+# AI-Interviewer-BACKEND-HCI
+
 AI-Interviewer-BACKEND-HCI is a backend service for an AI-based interviewing platform, leveraging FastAPI and other technologies to provide an interactive interview experience.
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+- Python
+- pip (Python package manager)
+
+### Environment Setup
+
+To set up the project environment:
+
+1. **Create a Virtual Environment**:
+   ```bash
+   source venv/Scripts/activate
+
 
 Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
