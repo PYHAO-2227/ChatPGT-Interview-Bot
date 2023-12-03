@@ -89,30 +89,61 @@ def save_messages(user_message, gpt_response):
     with open(file, 'w') as f:
         json.dump(messages, f)
 
-def text_to_speech(text):
-    voice_id = '21m00Tcm4TlvDq8ikWAM'
+# def text_to_speech(text):
+#     voice_id = '21m00Tcm4TlvDq8ikWAM'
     
-    url = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+#     url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 
-    headers = {
-        "Accept": "audio/mpeg",
-        "Content-Type": "application/json",
-        "xi-api-key": elevenlabs_key
-    }
+#     headers = {
+#         "Accept": "audio/mpeg",
+#         "Content-Type": "application/json",
+#         "xi-api-key": elevenlabs_key
+#     }
 
-    data = {
+#     data = {
+#         "text": text,
+#         "model_id": "eleven_monolingual_v1",
+#         "voice_settings": {
+#             "stability": 0.5,
+#             "similarity_boost": 0.5
+#         }
+#     }
+
+#     try:
+#         response = requests.request("POST", url, json=data, headers=headers)
+#         if response.status_code == 200:
+#             # print(response.text)
+#             return response.content
+#         else:
+#             print('something went wrong')
+#     except Exception as e:
+#         print(e)
+
+def text_to_speech(text):
+    voice_id = 'pNInz6obpgDQGcFmaJgB'
+    
+    body = {
         "text": text,
         "model_id": "eleven_monolingual_v1",
         "voice_settings": {
-            "stability": 0.5,
-            "similarity_boost": 0.5
+            "stability": 0,
+            "similarity_boost": 0,
+            "style": 0.5,
+            "use_speaker_boost": True
         }
     }
 
+    headers = {
+        "Content-Type": "application/json",
+        "accept": "audio/mpeg",
+        "xi-api-key": elevenlabs_key
+    }
+
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+
     try:
-        response = requests.request("POST", url, json=data, headers=headers)
+        response = requests.post(url, json=body, headers=headers)
         if response.status_code == 200:
-            print(response.text)
             return response.content
         else:
             print('something went wrong')
