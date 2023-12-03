@@ -20,7 +20,7 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    html_path = Path(__file__).parent / "testPage3.html"
+    html_path = Path(__file__).parent / "Page.html"
 
     return FileResponse(html_path, media_type="text/html")
 
