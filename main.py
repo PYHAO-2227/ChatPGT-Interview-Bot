@@ -1,9 +1,12 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from gtts import gTTS
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from pathlib import Path
 import os
 import json
 import requests
@@ -17,7 +20,9 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    html_path = Path(__file__).parent / "testPage3.html"
+
+    return FileResponse(html_path, media_type="text/html")
 
 @app.post("/talk")
 async def post_audio(file: UploadFile):

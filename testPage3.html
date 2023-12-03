@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+</head>
+<body>
+    <h1>Chat Interface</h1>
+
+    <button onclick="startRecording()">Start Recording</button>
+    <button onclick="stopRecording()">Stop Recording</button>
+    <button onclick="talk()">Talk</button>
+    <button onclick="clearHistory()">Clear History</button>
+
+    <audio id="audioPlayer" controls></audio>
+
+    <script>
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(recordedChunks, { type: 'audio/wav' });
+                    const audioPlayer = document.getElementById('audioPlayer');
+                    audioPlayer.src = URL.createObjectURL(audioBlob);
+                };
+
+                mediaRecorder.start();
+            } catch (error) {
+                console.error('Error starting recording:', error);
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+        }
+
+        async function talk() {
+            if (recordedChunks.length === 0) {
+                alert('Please record a voice message first.');
+                return;
+            }
+
+            const audioBlob = new Blob(recordedChunks, { type: 'audio/wav' });
+
+            // Send audio file to the server
+            const formData = new FormData();
+            formData.append('file', audioBlob, 'voice_message.wav');
+
+            try {
+                const response = await fetch('/talk', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const audioBlob = await response.blob();
+                    const audioPlayer = document.getElementById('audioPlayer');
+                    audioPlayer.src = URL.createObjectURL(audioBlob);
+                    audioPlayer.play();
+                } else {
+                    alert('Error processing the audio.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function clearHistory() {
+            try {
+                const response = await fetch('/clear', {
+                    method: 'GET',
+                });
+
+                if (response.ok) {
+                    alert('Chat history has been cleared.');
+                } else {
+                    alert('Error clearing chat history.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
