@@ -35,25 +35,47 @@
             margin-top: 20px;
         }
 
-        #embeddedWebsite {
+        #embeddedContainer {
             width: 100%;
             height: 500px;
+            overflow: hidden;
+        }
+
+        #embeddedWebsite {
+            width: 100%;
+            height: 100%;
+            border: none;
+            transform-origin: center center;
+            transition: transform 0.5s ease-in-out;
         }
     </style>
 </head>
 <body>
     <h1>Chat Interface</h1>
 
-    <iframe id="embeddedWebsite" src="https://callannie.ai/call" frameborder="0" allowfullscreen></iframe>
+    <div id="embeddedContainer">
+        <iframe id="embeddedWebsite" src="https://callannie.ai/call" frameborder="0" allowfullscreen></iframe>
+    </div>
 
     <button onclick="startRecording()">Start Recording</button>
     <button onclick="stopRecording()">Stop Recording</button>
     <button onclick="talk()">Talk</button>
     <button onclick="clearHistory()">Clear History</button>
+    
+    <button onclick="zoomIn()">Zoom In</button>
+    <button onclick="zoomOut()">Zoom Out</button>
 
     <audio id="audioPlayer" controls></audio>
 
     <script>
+        function zoomIn() {
+            document.getElementById('embeddedWebsite').style.transform = 'scale(1.5)';
+        }
+
+        function zoomOut() {
+            document.getElementById('embeddedWebsite').style.transform = 'scale(1)';
+        }
+
         let mediaRecorder;
         let recordedChunks = [];
 
