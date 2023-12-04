@@ -114,7 +114,7 @@
                 return;
             }
 
-            const audioBlob = new Blob(recordedChunks, { type: 'audio/wav' });
+            const audioBlob = new Blob(recordedChunks, { type: 'audio/mpeg' });
 
             // Send audio file to the server
             const formData = new FormData();
@@ -125,7 +125,7 @@
                     method: 'POST',
                     body: formData,
                 });
-
+                
                 if (response.ok) {
                     const audioBlob = await response.blob();
                     const audioPlayer = document.getElementById('audioPlayer');
@@ -137,6 +137,7 @@
             } catch (error) {
                 console.error('Error:', error);
             }
+            recordedChunks = [];
         }
 
         async function clearHistory() {
