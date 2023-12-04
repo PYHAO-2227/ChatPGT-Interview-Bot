@@ -1,8 +1,6 @@
-from fastapi import FastAPI, UploadFile, Form
+from fastapi import FastAPI, UploadFile
 from fastapi.responses import StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from gtts import gTTS
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -28,7 +26,6 @@ async def root():
 async def post_audio(file: UploadFile):
     user_message = transcribe_audio(file)
     chat_response = get_chat_response(user_message)
-    print(chat_response)
     audio_output = text_to_speech(chat_response)
 
     def iterfile():
@@ -94,36 +91,6 @@ def save_messages(user_message, gpt_response):
     with open(file, 'w') as f:
         json.dump(messages, f)
 
-# def text_to_speech(text):
-#     voice_id = '21m00Tcm4TlvDq8ikWAM'
-    
-#     url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-
-#     headers = {
-#         "Accept": "audio/mpeg",
-#         "Content-Type": "application/json",
-#         "xi-api-key": elevenlabs_key
-#     }
-
-#     data = {
-#         "text": text,
-#         "model_id": "eleven_monolingual_v1",
-#         "voice_settings": {
-#             "stability": 0.5,
-#             "similarity_boost": 0.5
-#         }
-#     }
-
-#     try:
-#         response = requests.request("POST", url, json=data, headers=headers)
-#         if response.status_code == 200:
-#             # print(response.text)
-#             return response.content
-#         else:
-#             print('something went wrong')
-#     except Exception as e:
-#         print(e)
-
 def text_to_speech(text):
     voice_id = 'pNInz6obpgDQGcFmaJgB'
     
@@ -149,6 +116,9 @@ def text_to_speech(text):
     try:
         response = requests.post(url, json=body, headers=headers)
         if response.status_code == 200:
+            audio_response_path = "audio_response.mp3"
+            with open(audio_response_path, "wb") as file:
+                file.write(response.content)
             return response.content
         else:
             print('something went wrong')
