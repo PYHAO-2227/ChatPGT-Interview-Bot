@@ -16,16 +16,16 @@ Before you begin, ensure you have the following installed:
 
 To set up the project environment:
 
-1. **Create a Virtual Environment**:
-- source venv/Scripts/activate
-- pip install fastapi
-- pip install "uvicorn[standard]"
-- pip install openai
-- pip install python-dotenv
-- pip install python-multipart
+1. **Create a Virtual Environment and**:
+
+- python3 -m venv your-env-name
+- source your-env-name/bin/activate
+- pip3 install -r requirements.txt
 
 2. **Running the Project**:
 - uvicorn main:app --reload
+
+2. **You should create a .env file locally which contains ELEVENLABS_KEY, OPEN_AI_KEY, and OPEN_AI_ORG**
 
 ### Other
 The project will be available at: http://localhost:8000

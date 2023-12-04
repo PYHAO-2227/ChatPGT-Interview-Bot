@@ -1,5 +1,4 @@
 .env
-requirements.txt
-/venv
 /hci
 /__pycache__
+/venv
